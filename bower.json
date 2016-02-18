@@ -1,0 +1,22 @@
+{
+  "name": "bus-stop-test",
+  "version": "0.0.1",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "dependencies": {
+    "google-map": "GoogleWebComponents/google-map",
+    "iron-selector": "polymerElements/iron-selector",
+    "paper-material": "PolymerElements/paper-material#~1.0.2",
+    "iron-ajax": "PolymerElements/iron-ajax#~1.0.6",
+    "iron-list": "PolymerElements/iron-list#~1.1.4",
+    "paper-typeahead-input": "paper-typeahead-input#1.0.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "*",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "~1.1.3",
+    "webcomponentsjs": "master",
+    "page": "unify-default-url-generation"
+  }
+}

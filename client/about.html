@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>So you know HTML, CSS & JS?</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          
+          <h1 id="so-you-know-html-css-js-">So you know HTML, CSS &amp; JS?</h1>
+<!--
+
+  Thanks for taking the time to peek at the source code. There's not all that much 
+  to see, as this file was generated from a Markdown source file. 
+
+  The Bus API we put together was a good deal of fun however, using Node.js goodness. 
+
+  Anyway, good luck with the test!
+
+ -->
+<h2 id="show-us-your-skillz">Show us your skillz</h2>
+<p>From time to time in London you’ll need to catch a bus. Some lucky bus stops have live departure boards, but not all do. To help, we’d like you to build an app to show a live departure board for any bus stop in London.</p>
+<p>The task is designed to assess your interest and experience in front-end web development. We want to see your code, your approach, and your talent. </p>
+<h2 id="what-you-need-to-build">What you need to build</h2>
+<p>The minimum requirements for the bus departure board app are simply defined:</p>
+<ol>
+<li>Make sure there’s a map, which lets you find any stop in London</li>
+<li>Make sure a user can select a specific stop, and see its imminent departures</li>
+</ol>
+<p>That’s it. We leave the design &amp; user-experience to you.</p>
+<h2 id="what-we-re-looking-for">What we’re looking for</h2>
+<p>In your app we’ll be looking for:</p>
+<ul>
+<li>Completeness of solution - <em>does the app work as per the requirements?</em></li>
+<li>Quality of code - <em>is your code clean &amp; well written?</em></li>
+</ul>
+<p>If you can’t complete your app, give us a description of what you were planning / how you would approach it.</p>
+<h2 id="getting-started">Getting started</h2>
+<p>To get started, just go ahead and create your HTML, CSS, JavaScript files. </p>
+<p>For your map, we recommend checking out the <a href="https://developers.google.com/maps/documentation/javascript/">Google Maps API</a> although you can use a different maps service if you wish.</p>
+<p>If you’re going to use an AJAX library, stick with <a href="http://jquery.com/">jQuery</a>.</p>
+<p>The bulk of your work will be finding bus stops and bus data. We’ve written a simple <a href="#api">Bus stop API</a> using the <a href="http://www.tfl.gov.uk/info-for/open-data-users/our-feeds?intcmp=4064#on-this-page-2">TFL bus data</a>  that will cover everything you’ll need for your app. </p>
+<h2 id="when-you-re-done">When you’re done</h2>
+<p>We expect most people to spend between one to four hours on this task, although you’re free to use more time if you want.</p>
+<p>Once you’re done, you’ll need to zip your code and send it to us, so make sure it can work when unzipped.</p>
+<p><a id="api"></a></p>
+<h2 id="bus-stop-api">Bus stop API</h2>
+<p>The bus stop API consists of the following resources:</p>
+<ol>
+<li><a href="#get-bus-stops">/bus-stops</a></li>
+<li><a href="#get-bus-stopsbus-stop-id">/bus-stops/{bus-stop-id}</a>  </li>
+</ol>
+<p>All requests support <a href="http://json-p.org/">JSONP</a> via the ‘callback’ parameter (eg. <code>?callback=foo</code>).</p>
+<p><a id="get-bus-stops"></a></p>
+<h3 id="get-bus-stops">GET /bus-stops</h3>
+<p>Return a list of bus stops within a given area (a bounding pox defined by two opposing points of a rectangle). </p>
+<h4 id="required-parameters">Required parameters</h4>
+<ul>
+<li><code>northEast={lat,long}</code> - the top-right geographical point of a bounding box, where lat and long are decimal values.</li>
+<li><code>southWest={lat,long}</code> - the bottom-left geographical point of a bounding box, where lat and long are decimal values. </li>
+</ul>
+<h4 id="example-url">Example URL</h4>
+<p><a href="/bus-stops?northEast=51.52783450,-0.04076115&amp;southWest=51.51560467,-0.10225884"><code>/bus-stops?northEast=51.52783450,-0.04076115&amp;southWest=51.51560467,-0.10225884&#39;</code></a></p>
+<h4 id="200-response-ie-a-successful-request-">200 Response (ie. a successful request)</h4>
+
+          
+            <div class='highlight'><pre>{
+  <span class="hljs-string">"markers"</span>: [
+    {
+      <span class="hljs-string">"id"</span>: <span class="hljs-string">"77994"</span>,
+      <span class="hljs-string">"name"</span>: <span class="hljs-string">"Aldersgate Street / Goswell Road"</span>,
+      <span class="hljs-string">"stopIndicator"</span>: <span class="hljs-string">"BX"</span>,
+      <span class="hljs-string">"lat"</span>: <span class="hljs-number">51.52363797159915</span>,
+      <span class="hljs-string">"lng"</span>: -<span class="hljs-number">0.09749245212910045</span>,
+      ...
+      <span class="hljs-string">"routes"</span>: [{
+        <span class="hljs-string">"id"</span>: <span class="hljs-string">"55"</span>,
+        <span class="hljs-string">"name"</span>: <span class="hljs-string">"55"</span>
+      }]
+    }
+    ...
+  ]
+}</pre></div>
+          
+        
+
+        
+      </div>
+
+      
+        
+        <h4 id="400-response-ie-an-error-">400 Response (ie. an error)</h4>
+<pre><code>{
+  <span class="hljs-string">"errorMessage"</span>: <span class="hljs-string">"Missing parameter. Please ensure you have both 'northEast' and 'southWest' parameters defined."</span>
+}
+</code></pre><p><a id="get-bus-stopsbus-stop-id"></a></p>
+<h3 id="get-bus-stops-bus-stop-id-">GET <strong>/bus-stops/{bus-stop-id}</strong></h3>
+<p>Retrieve a list of bus arrivals for a single stop</p>
+<h4 id="required-parameters">Required parameters</h4>
+<p>There are none.</p>
+<h4 id="example-url">Example URL</h4>
+<p><a href="/bus-stops/58382"><code>/bus-stops/58382</code></a></p>
+<h4 id="200-response">200 Response</h4>
+
+        
+          <div class='highlight'><pre>{
+  <span class="hljs-string">"arrivals"</span>: [
+    {
+      <span class="hljs-string">"routeId"</span>: <span class="hljs-string">"K3"</span>,
+      <span class="hljs-string">"destination"</span>: <span class="hljs-string">"Roehampton Vale"</span>,
+      <span class="hljs-string">"estimatedWait"</span>: <span class="hljs-string">"3 min"</span>,
+      <span class="hljs-string">"scheduledTime"</span>: <span class="hljs-string">"16:27"</span>,
+      <span class="hljs-string">"isCancelled"</span>: <span class="hljs-literal">false</span>,
+      ...
+    },
+    ...
+  ]
+  ...
+}</pre></div>
+        
+      
+        
+        <h4 id="400-response-ie-an-error-">400 Response (ie. an error)</h4>
+<pre><code>{
+  <span class="hljs-string">"errorMessage"</span>: <span class="hljs-string">"There was an error retrieving bus stop information. Please ensure you use a valid bus stop id"</span>
+}
+</code></pre><h2 id="final-words">Final words</h2>
+<p>We hope you enjoy building your bus departures app. We’re interested in your feedback, so do let us know what you thought of the task.</p>
+<p>And most finally, good luck!</p>
+<div id="logo">
+  <img src="img/digitas-lbi.png" alt="DigitasLBi" />
+</div>
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44229394-1', 'digitaslbi-id-test.herokuapp.com');
+  ga('send', 'pageview');
+
+</script>
+
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

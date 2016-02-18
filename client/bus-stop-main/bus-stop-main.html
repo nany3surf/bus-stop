@@ -1,0 +1,160 @@
+<link rel="import" href="../bus-stop-board/bus-stop-board.html">
+<link rel="import" href="../bower_components/google-map/google-map.html">
+<link rel="import" href="../bower_components/google-apis/google-apis.html">
+<link rel="import" href="../bower_components/paper-typeahead-input/paper-typeahead-input.html">
+<!--
+An element providing an input.
+
+Example:
+
+    <bus-stop-main></bus-stop-main>
+
+@demo
+-->
+<dom-module id="bus-stop-main">
+  <template>
+    <h2><img src="http://www.eplates.info/busstops.gif"/>LONDON BUS DEPARTURE BOARD</h2>
+    <div class="search">
+      <paper-typeahead-input local-candidates="{{stops}}" placeholder="Please enter a bus stop and push enter" max-suggestions="15"></paper-typeahead-input>
+    </div>
+    <div class="board">
+      <bus-stop-board markers="{{markers}}" image="{{icon}}"></bus-stop-board>
+    </div>
+    <div class="map">
+      <google-map id="googleMap" map="{{map}}" zoom="15" markers="{{markers}}" latitude="51.52172" longitude="-0.07151" single-info-window>
+        <template is="dom-repeat" items="{{markers}}">
+           <google-map-marker id="{{item.id}}" latitude="{{item.lat}}" longitude="{{item.lng}}" icon="{{icon}}" title="{{item.name}}" click-events="true"></google-map-marker>
+        </template>
+      </google-map>
+    </div>
+  </template>
+</dom-module>
+<!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script> -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+
+  Polymer({
+
+    is: 'bus-stop-main',
+
+    properties: {
+      /**
+       * The Google map object.
+       * @type google.maps.Map
+       */
+      map: {
+        type: Object,
+        notify: true
+      },
+      /**
+      * Marker icon
+      */
+      icon: {
+        type: String,
+        value: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Aiga_bus_trans.svg/28px-Aiga_bus_trans.svg.png'
+      },
+      /**
+      * Previous markers array
+      */
+      markers: {
+        type: Array,
+        value: function() {
+          return [];
+        },
+        notify: true
+      },
+      /**
+      * Bus stop names
+      */
+      stops: {
+        type: Array,
+        value: function() {
+          return [];
+        }
+      }
+    },
+
+    listeners: {
+      'google-map-ready': '_mapReady',
+      'google-map-marker-click': '_markerClick'
+    },
+
+    ready: function() {
+      $('paper-input').bind('change paste keyup keydown', function() {
+        this._inputChanged();
+      }.bind(this));
+    },
+
+    _mapReady: function(){
+      google.maps.event.addListener(this.map, 'bounds_changed', function() {
+        this._boundsChanged();
+      }.bind(this));
+    },
+
+    _boundsChanged: function() {
+      this.placeMarkers();
+    },
+
+    placeMarkers: function() {
+      var bounds = this.map.getBounds();
+      var info = [];
+      var url = '/bus-stops?northEast=' + bounds.Pa.I + ',' + bounds.La.I +
+        '&southWest=' + bounds.Pa.j + ',' + bounds.La.j;
+      $.ajax({
+        context: this,
+        url: url,
+        success: function(data) {
+          /* Reset markers to empty */
+          this.set('markers', []);
+          this.set('stops', []);
+
+          data.markers.forEach(function(markerData) {
+            markerData.name = markerData.name + (markerData.stopIndicator ? ' (' + markerData.stopIndicator + ')' : '');
+            this.push('stops', markerData.name);
+            info.push(markerData);
+          }.bind(this));
+          this.set('markers', info);
+        }
+      });
+    },
+
+    _markerClick: function(ev) {
+      var id = ev.srcElement.id;
+      var name = ev.srcElement.title;
+      var marker = ev.target.marker;
+      var infowindow = new google.maps.InfoWindow({
+        content: 'BUS DEPARTURE BOARD'
+      });
+      $.ajax({
+        context: this,
+        url: '/bus-stops/' + id,
+        success: function(arrivalsData) {
+          var content = '<h3>' + name + '</h3>';
+          if (arrivalsData.arrivals !== undefined){
+            arrivalsData.arrivals.forEach(function(arrivals) {
+              content += '<p><strong>' + arrivals.routeName + '</strong>: ' + arrivals.estimatedWait + '</p>';
+            });
+          }
+          infowindow.setContent(content);
+          infowindow.open(this.map, marker);
+        }
+      })
+    },
+
+    _inputChanged: function(data){
+      var value = $('paper-typeahead-input')[0].inputValue;
+      var markers = this.markers;
+      var info = [];
+      value === '' ? this.placeMarkers() : '';
+      markers.forEach(function(markerData) {
+        if (markerData.name === value){
+          this.set('markers', []);
+          info.push(markerData);
+          this.set('markers', info);
+          return;
+        }
+      }.bind(this));
+    }
+  });
+
+</script>

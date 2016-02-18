@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<!--
+An element providing an board.
+
+Example:
+
+    <bus-stop-board></bus-stop-board>
+
+@demo
+-->
+<dom-module id="bus-stop-board">
+  <style>
+    :host {
+      @apply(--layout-vertical);
+      @apply(--paper-font-common-base);
+    }
+
+    iron-list {
+      height: 100%;
+      background-color: var(--paper-grey-200, #eee);
+      --iron-list-items-container: {
+        margin: 1rem 2rem;
+      };
+    }
+  </style>
+  <template>
+    <iron-list id="list" items="[[info]]">
+      <template>
+        <div label$="{{item.id}}" on-tap="_collapseExpand">
+          <div class$="[[getClassForItem(item, item.expanded)]]" tabindex="0">
+            <img class="avatar" src="[[image]]">
+            <div class="pad">
+              <div class="primary">[[item.name]]</div>
+              <div class="shortText">
+                <p><strong>Towards:&nbsp;</strong>[[item.towards]]</p>
+              </div>
+              <div class="longText">
+                <template is="dom-repeat" items="[[item.arrivals]]" as="arrival">
+                  <p><strong>Destination:&nbsp;</strong>{{arrival.destination}}</p>
+                  <p><strong>{{arrival.routeName}}</strong><strong>:&nbsp;</strong>{{arrival.time}}</p>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </iron-list>
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'bus-stop-board',
+    properties: {
+      markers: {
+        type: Array,
+        observer: '_markersChanged'
+      },
+      image: {
+        type: String
+      },
+      info: {
+        type: Object
+      }
+    },
+
+    _markersChanged: function () {
+      this.info = [];
+      this.set('info', [{id: '', name: '', towards: '', expanded: false, arrivals: []}]);
+      this.markers.forEach(function(markerData){
+        $.ajax({
+          context: this,
+          url: '/bus-stops/' + markerData.id,
+          success: function(arrivalsData) {
+            var arrivals = [];
+            if (arrivalsData.arrivals !== undefined){
+              arrivalsData.arrivals.forEach(function(data) {
+                arrivals.push({destination: data.destination, routeName: data.routeName, time: data.estimatedWait});
+              });
+            }
+            var name = markerData.name;
+            var towards = markerData.towards !== null ? markerData.towards : 'No info';
+            this.info[0].name === '' ? this.set('info', [{id: markerData.id, name: name, towards: towards, expanded: false, arrivals: arrivals}]) :
+                this.push('info', {id: markerData.id, name: name, towards: towards, expanded: false, arrivals: arrivals});
+
+          }
+        })
+      }.bind(this));
+    },
+
+    _collapseExpand: function(e) {
+      var id = e.currentTarget.getAttribute('label');
+      var marker = $('#'+id);
+      var list = this.$.list;
+      var index = e.model.index;
+      var isExpanded = list.items[index].expanded;
+
+      list.set('items.' + index + '.expanded', !isExpanded);
+      list.updateSizeForItem(e.model.index);
+
+      if (this.info[index].expanded){
+        marker[0].marker.setAnimation(google.maps.Animation.BOUNCE);
+        this.async(function() {
+          marker[0].marker.setAnimation(null);
+        }, 3000);
+      }
+    },
+
+    getClassForItem: function(item, expanded) {
+      return expanded ? 'item expanded' : 'item';
+    }
+  });
+
+</script>
